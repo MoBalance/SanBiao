@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/MoBalance/SanBiao/main/schemas/repository.schema.json",
+  "title": "SanBiao JSON rule repository manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["repositorySchemaVersion", "release", "coreRules", "knowledgePacks"],
+  "properties": {
+    "repositorySchemaVersion": { "const": 1 },
+    "release": { "$ref": "#/$defs/identifier" },
+    "coreRules": { "$ref": "#/$defs/document" },
+    "knowledgePacks": {
+      "type": "array",
+      "maxItems": 128,
+      "items": { "$ref": "#/$defs/pack" }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9._/+\\-]+$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/+\\-]+\\.json$"
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "channel", "path", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/identifier" },
+        "channel": { "$ref": "#/$defs/identifier" },
+        "path": { "$ref": "#/$defs/path" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "model"],
+      "properties": {
+        "protocol": { "enum": ["anthropic", "openai", "gemini"] },
+        "provider": { "$ref": "#/$defs/identifier" },
+        "model": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "pack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "channel", "path", "digest", "targets"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "version": { "$ref": "#/$defs/identifier" },
+        "channel": { "$ref": "#/$defs/identifier" },
+        "path": { "$ref": "#/$defs/path" },
+        "digest": { "$ref": "#/$defs/digest" },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/target" }
+        }
+      }
+    }
+  }
+}

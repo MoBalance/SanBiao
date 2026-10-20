@@ -1,0 +1,93 @@
+name: validate
+
+# SanBiao ships JSON only, so this workflow is the repository's whole test
+# suite: it re-checks every invariant TheStandard (法仪) enforces at load time,
+# because a bad commit here silently breaks every downstream detection build.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only: validation never writes to the repository.
+permissions:
+  contents: read
+
+# One validation per ref; a newer push supersedes an in-flight run.
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository:
+    name: JSON contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      # Node version comes from .nvmrc when the file exists, otherwise 22 LTS.
+      - name: Resolve Node version
+        id: node-version
+        run: |
+          if [ -f .nvmrc ]; then
+            echo "version=$(tr -d '[:space:]' < .nvmrc)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=22" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+
+      - name: Validate manifest, schemas, digests, sections and activation
+        run: node scripts/validate.mjs
+
+  consumer-cross-check:
+    name: TheStandard consumer cross-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      # Layout matters: the engine's repository tests resolve the shared rules as
+      # `CARGO_MANIFEST_DIR/../../../SanBiao/...`. Inside the workspace,
+      # CARGO_MANIFEST_DIR is <workspace>/TheStandard/crates/the-standard, so
+      # ../../../ lands on the workspace root and both repositories must be
+      # siblings there: <workspace>/SanBiao and <workspace>/TheStandard.
+      - name: Check out SanBiao
+        uses: actions/checkout@v4
+        with:
+          path: SanBiao
+
+      # TheStandard is private. The automatic token of a SanBiao-triggered run
+      # can only read SanBiao, so this checkout fails unless the repository is
+      # granted access to MoBalance/TheStandard. Two supported ways:
+      #   1. add a `THESTANDARD_READ_TOKEN` repository secret holding a
+      #      fine-grained PAT with read access to TheStandard (used below when
+      #      present), or
+      #   2. install a GitHub App / grant the workflow access in TheStandard.
+      # Without either, the step fails softly and the cross-check is skipped with
+      # a warning instead of turning every SanBiao push red for a permission the
+      # repository cannot fix from its own settings.
+      - name: Check out TheStandard
+        id: consumer
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: MoBalance/TheStandard
+          path: TheStandard
+          fetch-depth: 1
+          token: ${{ secrets.THESTANDARD_READ_TOKEN || github.token }}
+
+      - name: Run the consumer's repository tests
+        if: steps.consumer.outcome == 'success'
+        working-directory: TheStandard
+        env:
+          CARGO_TERM_COLOR: always
+        run: cargo test -p the-standard --lib repository
+
+      - name: Report skipped cross-check
+        if: steps.consumer.outcome != 'success'
+        run: |
+          echo "::warning::Skipped the TheStandard cross-check: this workflow run cannot read MoBalance/TheStandard. Add a THESTANDARD_READ_TOKEN repository secret (read access to TheStandard) or grant this repository access, then re-run."

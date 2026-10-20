@@ -1,0 +1,27 @@
+{
+  "repositorySchemaVersion": 1,
+  "release": "2026.10.19.3",
+  "coreRules": {
+    "id": "the-standard",
+    "version": "2026.10.19.3",
+    "channel": "stable",
+    "path": "rules/the-standard/stable.json",
+    "digest": "sha256:428451a058db70fb363e888da035e9ff9d222b1c197e7aba2868cff469481e0e"
+  },
+  "knowledgePacks": [
+    {
+      "id": "sanbiao-demo-knowledge",
+      "version": "2026.08.07.1",
+      "channel": "stable",
+      "path": "packs/demo/the-standard-demo-model.json",
+      "digest": "sha256:2917e705d6cd98aaf2a4209025c7d01e318e4c311024f453f82c2416ed7df8cb",
+      "targets": [
+        {
+          "protocol": "anthropic",
+          "provider": "the-standard",
+          "model": "the-standard-demo-model"
+        }
+      ]
+    }
+  ]
+}

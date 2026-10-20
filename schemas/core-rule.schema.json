@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/MoBalance/SanBiao/main/schemas/core-rule.schema.json",
+  "title": "TheStandard core rule bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "version", "channel", "publishedAt", "payload"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "const": "the-standard" },
+    "version": { "$ref": "#/$defs/identifier" },
+    "channel": { "$ref": "#/$defs/identifier" },
+    "publishedAt": { "type": "string", "format": "date-time" },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["payloadSchemaVersion", "sections", "engine", "probes", "evaluation", "strategies"],
+      "properties": {
+        "payloadSchemaVersion": { "const": 2 },
+        "sections": { "$ref": "#/$defs/sections" },
+        "engine": { "$ref": "#/$defs/engine" },
+        "probes": { "$ref": "#/$defs/probes" },
+        "evaluation": { "$ref": "#/$defs/evaluation" },
+        "strategies": { "$ref": "#/$defs/strategies" }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9._/+\\-]+$"
+    },
+    "sectionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40,
+      "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+    },
+    "sections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultEnabled", "items"],
+      "properties": {
+        "defaultEnabled": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/sectionId" }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "description", "strategies"],
+            "properties": {
+              "id": { "$ref": "#/$defs/sectionId" },
+              "label": { "type": "string", "minLength": 1, "maxLength": 120 },
+              "description": { "type": "string", "minLength": 1, "maxLength": 600 },
+              "strategies": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "$ref": "#/$defs/identifier" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verifiedThreshold", "inconclusiveThreshold", "tierMessages"],
+      "properties": {
+        "verifiedThreshold": { "type": "number", "minimum": 0, "maximum": 100 },
+        "inconclusiveThreshold": { "type": "number", "minimum": 0, "maximum": 100 },
+        "tierMessages": { "$ref": "#/$defs/nonEmptyObject" }
+      }
+    },
+    "probes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "activation",
+        "identity",
+        "reasoningAttestation",
+        "behaviorScenarios",
+        "knowledge",
+        "documentPrompt",
+        "toolContract",
+        "responseIntegrity",
+        "relayAudit",
+        "consistency",
+        "context",
+        "cache",
+        "injection",
+        "knowledgeCutoff",
+        "webSearch",
+        "reasoningIQ",
+        "thinkingChain"
+      ],
+      "properties": {
+        "activation": { "$ref": "#/$defs/nonEmptyObject" },
+        "identity": { "$ref": "#/$defs/nonEmptyObject" },
+        "reasoningAttestation": { "$ref": "#/$defs/nonEmptyObject" },
+        "behaviorScenarios": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": { "$ref": "#/$defs/nonEmptyObject" }
+        },
+        "knowledge": { "$ref": "#/$defs/nonEmptyObject" },
+        "documentPrompt": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "toolContract": { "$ref": "#/$defs/nonEmptyObject" },
+        "responseIntegrity": { "$ref": "#/$defs/nonEmptyObject" },
+        "relayAudit": { "$ref": "#/$defs/nonEmptyObject" },
+        "consistency": { "$ref": "#/$defs/nonEmptyObject" },
+        "context": { "$ref": "#/$defs/nonEmptyObject" },
+        "cache": { "$ref": "#/$defs/cacheReuse" },
+        "injection": { "$ref": "#/$defs/injectionOverhead" },
+        "knowledgeCutoff": { "$ref": "#/$defs/knowledgeCutoff" },
+        "webSearch": { "$ref": "#/$defs/webSearch" },
+        "reasoningIQ": { "$ref": "#/$defs/reasoningIq" },
+        "thinkingChain": { "$ref": "#/$defs/thinkingChain" }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "grade",
+        "skippedSummary",
+        "executionErrors",
+        "identity",
+        "reasoningAttestation",
+        "behaviorScenarios",
+        "knowledgeChallenges",
+        "documentUnderstanding",
+        "toolContract",
+        "responseIntegrity",
+        "relayAudit",
+        "consistency",
+        "context",
+        "protocol",
+        "identifiers",
+        "cacheReuse",
+        "injectionOverhead",
+        "knowledgeCutoff",
+        "webSearch",
+        "reasoningIQ",
+        "thinkingChain"
+      ],
+      "properties": {
+        "grade": { "$ref": "#/$defs/nonEmptyObject" },
+        "skippedSummary": { "type": "string", "minLength": 1 },
+        "executionErrors": { "$ref": "#/$defs/nonEmptyObject" },
+        "identity": { "$ref": "#/$defs/nonEmptyObject" },
+        "reasoningAttestation": { "$ref": "#/$defs/nonEmptyObject" },
+        "behaviorScenarios": { "$ref": "#/$defs/nonEmptyObject" },
+        "knowledgeChallenges": { "$ref": "#/$defs/nonEmptyObject" },
+        "documentUnderstanding": { "$ref": "#/$defs/nonEmptyObject" },
+        "toolContract": { "$ref": "#/$defs/nonEmptyObject" },
+        "responseIntegrity": { "$ref": "#/$defs/nonEmptyObject" },
+        "relayAudit": { "$ref": "#/$defs/nonEmptyObject" },
+        "consistency": { "$ref": "#/$defs/nonEmptyObject" },
+        "context": { "$ref": "#/$defs/nonEmptyObject" },
+        "protocol": { "$ref": "#/$defs/nonEmptyObject" },
+        "identifiers": { "$ref": "#/$defs/nonEmptyObject" },
+        "cacheReuse": { "$ref": "#/$defs/nonEmptyObject" },
+        "injectionOverhead": { "$ref": "#/$defs/nonEmptyObject" },
+        "knowledgeCutoff": { "$ref": "#/$defs/nonEmptyObject" },
+        "webSearch": { "$ref": "#/$defs/nonEmptyObject" },
+        "reasoningIQ": { "$ref": "#/$defs/nonEmptyObject" },
+        "thinkingChain": { "$ref": "#/$defs/nonEmptyObject" }
+      }
+    },
+    "strategies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reasoningBudgetFingerprint"],
+      "properties": {
+        "reasoningBudgetFingerprint": { "$ref": "#/$defs/nonEmptyObject" }
+      }
+    },
+    "dateString": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "jsonPointer": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 160,
+      "pattern": "^/"
+    },
+    "cacheReuse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rounds", "maxTokens", "prefixUnits", "prefixUnitTemplate", "roundInstructionTemplate", "readPointers", "writePointers"],
+      "properties": {
+        "rounds": { "type": "integer", "minimum": 2, "maximum": 8 },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "prefixUnits": { "type": "integer", "minimum": 1, "maximum": 1024 },
+        "prefixUnitTemplate": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "\\{index\\}" },
+        "roundInstructionTemplate": { "type": "string", "minLength": 1, "maxLength": 1000, "pattern": "\\{round\\}" },
+        "readPointers": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/jsonPointer" } },
+        "writePointers": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/jsonPointer" } }
+      }
+    },
+    "injectionOverhead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baselinePrompt", "wrappedPrompt", "expectedExtraTokens", "maxTokens"],
+      "properties": {
+        "baselinePrompt": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "wrappedPrompt": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "expectedExtraTokens": { "type": "integer", "minimum": 0, "maximum": 4096 },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 4096 }
+      }
+    },
+    "knowledgeCutoffChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["letter", "text", "kind"],
+      "properties": {
+        "letter": { "enum": ["A", "B", "C", "D"] },
+        "text": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "kind": { "enum": ["known", "unknown", "wrong"] }
+      }
+    },
+    "knowledgeCutoffAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "event", "question", "choices"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "date": { "$ref": "#/$defs/dateString" },
+        "event": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "question": { "type": "string", "minLength": 1, "maxLength": 400 },
+        "choices": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/knowledgeCutoffChoice" } }
+      }
+    },
+    "knowledgeCutoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxQuestions", "maxTokens", "window", "promptTemplate", "choiceLineTemplate", "invalidatedMarkers", "anchors"],
+      "properties": {
+        "maxQuestions": { "type": "integer", "minimum": 1, "maximum": 10 },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "window": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "to"],
+          "properties": {
+            "from": { "$ref": "#/$defs/dateString" },
+            "to": { "$ref": "#/$defs/dateString" }
+          }
+        },
+        "promptTemplate": { "type": "string", "minLength": 1, "maxLength": 4000, "pattern": "\\{question\\}" },
+        "choiceLineTemplate": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\{letter\\}" },
+        "invalidatedMarkers": { "type": "array", "minItems": 1, "maxItems": 32, "items": { "type": "string", "minLength": 1, "maxLength": 160 } },
+        "anchors": { "type": "array", "minItems": 1, "maxItems": 32, "items": { "$ref": "#/$defs/knowledgeCutoffAnchor" } }
+      }
+    },
+    "webSearchProtocolRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "mode", "bodyPatch"],
+      "properties": {
+        "protocol": { "enum": ["anthropic", "openai", "gemini"] },
+        "mode": { "enum": ["native_tool", "deepseek_tools_search"] },
+        "bodyPatch": { "$ref": "#/$defs/nonEmptyObject" }
+      }
+    },
+    "webSearch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt", "maxTokens", "sourceUrlKeys", "executionMarkers", "protocols"],
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "sourceUrlKeys": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "executionMarkers": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "protocols": { "type": "array", "minItems": 1, "maxItems": 3, "items": { "$ref": "#/$defs/webSearchProtocolRule" } }
+      }
+    },
+    "reasoningIqAnswerFormat": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "reasoningIqQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt", "answerType", "expected"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "prompt": { "type": "string", "minLength": 1, "maxLength": 600 },
+        "answerType": { "enum": ["integer", "string", "choice"] },
+        "expected": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "tolerance": { "type": "integer", "minimum": 0, "maximum": 1000 }
+      }
+    },
+    "reasoningIq": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scoringVersion", "maxTokens", "promptTemplate", "answerFormats", "refusalMarkers", "truncationStopReasons", "questions"],
+      "properties": {
+        "scoringVersion": { "$ref": "#/$defs/identifier" },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 4096 },
+        "promptTemplate": { "type": "string", "minLength": 1, "maxLength": 4096, "pattern": "\\{question\\}" },
+        "answerFormats": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["integer", "string", "choice"],
+          "properties": {
+            "integer": { "$ref": "#/$defs/reasoningIqAnswerFormat" },
+            "string": { "$ref": "#/$defs/reasoningIqAnswerFormat" },
+            "choice": { "$ref": "#/$defs/reasoningIqAnswerFormat" }
+          }
+        },
+        "refusalMarkers": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 120 } },
+        "truncationStopReasons": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "questions": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/reasoningIqQuestion" } }
+      }
+    },
+    "thinkingChainModes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "fullText", "redacted", "absent"],
+      "properties": {
+        "summary": { "$ref": "#/$defs/identifier" },
+        "fullText": { "$ref": "#/$defs/identifier" },
+        "redacted": { "$ref": "#/$defs/identifier" },
+        "absent": { "$ref": "#/$defs/identifier" }
+      }
+    },
+    "thinkingChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt", "thinkingType", "budgetTokens", "maxTokens", "thinkingBlockTypes", "redactedBlockTypes", "contentTypeKey", "textKey", "signatureKey", "summaryMaximumChars", "fullTextMinimumChars", "nonClaudeModelMarkers", "modes", "limitations"],
+      "properties": {
+        "prompt": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "thinkingType": { "enum": ["enabled", "adaptive"] },
+        "budgetTokens": { "type": "integer", "minimum": 1, "maximum": 128000 },
+        "maxTokens": { "type": "integer", "minimum": 1, "maximum": 128000 },
+        "thinkingBlockTypes": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "redactedBlockTypes": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "contentTypeKey": { "$ref": "#/$defs/identifier" },
+        "textKey": { "$ref": "#/$defs/identifier" },
+        "signatureKey": { "$ref": "#/$defs/identifier" },
+        "summaryMaximumChars": { "type": "integer", "minimum": 16, "maximum": 20000 },
+        "fullTextMinimumChars": { "type": "integer", "minimum": 17, "maximum": 40000 },
+        "nonClaudeModelMarkers": { "type": "array", "minItems": 1, "maxItems": 32, "items": { "type": "string", "minLength": 1, "maxLength": 80 } },
+        "modes": { "$ref": "#/$defs/thinkingChainModes" },
+        "limitations": { "type": "array", "minItems": 1, "maxItems": 16, "items": { "type": "string", "minLength": 1, "maxLength": 512 } }
+      }
+    }
+  }
+}

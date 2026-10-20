@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "sanbiao-demo-knowledge",
+  "version": "2026.08.07.1",
+  "channel": "stable",
+  "publishedAt": "2026-08-07T00:00:00Z",
+  "targets": [
+    {
+      "protocol": "anthropic",
+      "provider": "the-standard",
+      "model": "the-standard-demo-model"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "demo-resolution",
+      "prompt": "Return the exact word unknown for the deterministic repository integration check.",
+      "expectedTerms": ["unknown"],
+      "uncertaintyTerms": ["cannot confirm"]
+    }
+  ]
+}
