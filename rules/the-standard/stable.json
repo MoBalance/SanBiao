@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "the-standard",
-  "version": "2026.10.19.3",
+  "version": "2026.10.21.1",
   "channel": "stable",
   "publishedAt": "2026-10-19T09:20:00.000Z",
   "payload": {
@@ -32,115 +32,153 @@
           "id": "identity",
           "label": "Model identity",
           "description": "Asks the target to declare its model family, provider and identifiers, then compares the answer with the requested model and the repository provider mapping.",
-          "strategies": ["identity"]
+          "strategies": [
+            "identity"
+          ]
         },
         {
           "id": "behavior",
           "label": "Behavior scenarios",
           "description": "Runs the declarative prompt and response scenarios and compares the observed behavior with the declared expectations.",
-          "strategies": ["behavior_scenarios"]
+          "strategies": [
+            "behavior_scenarios"
+          ]
         },
         {
           "id": "reasoning",
           "label": "Reasoning attestation",
           "description": "Checks whether reasoning metadata is present and whether a provider-issued attestation survives a continuation request.",
-          "strategies": ["reasoning_attestation"]
+          "strategies": [
+            "reasoning_attestation"
+          ]
         },
         {
           "id": "reasoningBudget",
           "label": "Reasoning budget fingerprint",
           "description": "Compares reasoning-budget observations with the calibrated model families. It is an empirical aid and cannot cryptographically prove a backend identity.",
-          "strategies": ["reasoning_budget_fingerprint"]
+          "strategies": [
+            "reasoning_budget_fingerprint"
+          ]
         },
         {
           "id": "knowledge",
           "label": "Knowledge challenges",
           "description": "Sends the versioned knowledge challenges from the repository packs and scores the expected and uncertainty terms.",
-          "strategies": ["knowledge_challenges"]
+          "strategies": [
+            "knowledge_challenges"
+          ]
         },
         {
           "id": "document",
           "label": "Document understanding",
           "description": "Sends a deterministic PDF document prompt and checks whether the answer reflects the supplied document content.",
-          "strategies": ["document_understanding"]
+          "strategies": [
+            "document_understanding"
+          ]
         },
         {
           "id": "tools",
           "label": "Tool contract",
           "description": "Checks structured tool calls, argument shape, identifier round-tripping and result handling without executing any external tool.",
-          "strategies": ["tool_contract"]
+          "strategies": [
+            "tool_contract"
+          ]
         },
         {
           "id": "context",
           "label": "Context gradient",
           "description": "Increases controlled context across levels and compares the reported input tokens with the required echo and fixed-overhead estimates.",
-          "strategies": ["context"]
+          "strategies": [
+            "context"
+          ]
         },
         {
           "id": "consistency",
           "label": "Response consistency",
           "description": "Repeats the same request with deterministic sampling and compares the sampled answers for drift.",
-          "strategies": ["consistency"]
+          "strategies": [
+            "consistency"
+          ]
         },
         {
           "id": "responseIntegrity",
           "label": "Response integrity",
           "description": "Compares streaming and non-streaming responses, usage plausibility and long-output equivalence for the same request.",
-          "strategies": ["response_integrity"]
+          "strategies": [
+            "response_integrity"
+          ]
         },
         {
           "id": "relayAudit",
           "label": "Relay payload integrity",
           "description": "Checks whether the relay exposes its own prompt wrapping, secret markers or truncated payloads instead of passing the request through.",
-          "strategies": ["relay_payload_integrity"]
+          "strategies": [
+            "relay_payload_integrity"
+          ]
         },
         {
           "id": "protocol",
           "label": "Protocol conformance",
           "description": "Checks the response envelope, stop reasons, streaming lifecycle and model routing fields required by the declared protocol.",
-          "strategies": ["protocol"]
+          "strategies": [
+            "protocol"
+          ]
         },
         {
           "id": "identifiers",
           "label": "Identifier conformance",
           "description": "Checks stable identifier prefixes, response identifiers and usage identifiers against the repository provider and model mappings.",
-          "strategies": ["identifiers"]
+          "strategies": [
+            "identifiers"
+          ]
         },
         {
           "id": "cache",
           "label": "Cache reuse",
           "description": "Repeats the same prompt serially and compares reported cache-read and cache-write token accounting across rounds.",
-          "strategies": ["cache_reuse"]
+          "strategies": [
+            "cache_reuse"
+          ]
         },
         {
           "id": "injection",
           "label": "Injection overhead",
           "description": "Compares the reported input tokens of a baseline request and a deliberately wrapped request to estimate relay-added fixed overhead.",
-          "strategies": ["injection_overhead"]
+          "strategies": [
+            "injection_overhead"
+          ]
         },
         {
           "id": "knowledgeCutoff",
           "label": "Knowledge cutoff",
           "description": "Runs a serial binary search over rule-declared dated events to report an information window. It is informational, is never scored, and never changes a verdict.",
-          "strategies": ["knowledge_cutoff"]
+          "strategies": [
+            "knowledge_cutoff"
+          ]
         },
         {
           "id": "web",
           "label": "Web search evidence",
           "description": "Checks whether the target actually executed a web search through a declared protocol-specific tool and returned source URLs.",
-          "strategies": ["web_search"]
+          "strategies": [
+            "web_search"
+          ]
         },
         {
           "id": "reasoningIQ",
           "label": "Reasoning IQ",
           "description": "Asks eight rule-scored questions with verifiable, unique answers and reports how many final answers were correct. A refusal, a truncation or noise is downgraded, never scored as a wrong answer.",
-          "strategies": ["reasoning_iq"]
+          "strategies": [
+            "reasoning_iq"
+          ]
         },
         {
           "id": "thinkingChain",
           "label": "Thinking chain return",
           "description": "Checks whether the Anthropic messages endpoint returned readable thinking text together with a provider signature. Every other protocol is unobservable and never scored.",
-          "strategies": ["thinking_chain"]
+          "strategies": [
+            "thinking_chain"
+          ]
         }
       ]
     },
@@ -519,10 +557,26 @@
             "event": "Donald Trump was inaugurated for a second term as US president.",
             "question": "Has Donald Trump's second presidential inauguration already taken place?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -531,10 +585,26 @@
             "event": "A German federal election was held.",
             "question": "Has the next German federal election already been held?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -543,10 +613,26 @@
             "event": "Mark Carney became Prime Minister of Canada.",
             "question": "Has Mark Carney already become Prime Minister of Canada?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -555,10 +641,26 @@
             "event": "Pope Francis died.",
             "question": "Has Pope Francis already died?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -567,10 +669,26 @@
             "event": "Robert Prevost was elected Pope Leo XIV.",
             "question": "Has a new pope been elected under the name Leo XIV?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -579,10 +697,26 @@
             "event": "Lee Jae-myung won the South Korean presidential election.",
             "question": "Has Lee Jae-myung already won the South Korean presidential election?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -591,10 +725,26 @@
             "event": "Japan held its House of Councillors election.",
             "question": "Has Japan already held its House of Councillors election?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -603,10 +753,26 @@
             "event": "Charlie Kirk was assassinated.",
             "question": "Has Charlie Kirk already been assassinated?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -615,10 +781,26 @@
             "event": "Sanae Takaichi became Prime Minister of Japan.",
             "question": "Has Sanae Takaichi already become Prime Minister of Japan?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -627,10 +809,26 @@
             "event": "Zohran Mamdani won the New York City mayoral election.",
             "question": "Has Zohran Mamdani already won the New York City mayoral election?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -639,10 +837,26 @@
             "event": "Bulgaria adopted the euro as its currency.",
             "question": "Has Bulgaria already adopted the euro as its currency?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -651,10 +865,26 @@
             "event": "The United States celebrated its 250th anniversary.",
             "question": "Have the United States 250th anniversary celebrations already taken place?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           },
           {
@@ -663,10 +893,26 @@
             "event": "The 2026 FIFA World Cup final was played.",
             "question": "Has the 2026 FIFA World Cup final already been played?",
             "choices": [
-                { "letter": "A", "text": "Yes, the event has already happened.", "kind": "known" },
-                { "letter": "B", "text": "It is only scheduled, or I am not sure.", "kind": "unknown" },
-                { "letter": "C", "text": "No, it did not happen.", "kind": "wrong" },
-                { "letter": "D", "text": "It happened before 2025.", "kind": "wrong" }
+              {
+                "letter": "A",
+                "text": "Yes, the event has already happened.",
+                "kind": "known"
+              },
+              {
+                "letter": "B",
+                "text": "It is only scheduled, or I am not sure.",
+                "kind": "unknown"
+              },
+              {
+                "letter": "C",
+                "text": "No, it did not happen.",
+                "kind": "wrong"
+              },
+              {
+                "letter": "D",
+                "text": "It happened before 2025.",
+                "kind": "wrong"
+              }
             ]
           }
         ]
@@ -777,14 +1023,62 @@
           "length"
         ],
         "questions": [
-          { "id": "iq-1", "prompt": "What is 17 + 25?", "answerType": "integer", "expected": "42", "tolerance": 0 },
-          { "id": "iq-2", "prompt": "A leap year has 29 days in February. How many days do four such February months contain?", "answerType": "integer", "expected": "116", "tolerance": 0 },
-          { "id": "iq-3", "prompt": "What is 3^4 - 2^5?", "answerType": "integer", "expected": "49", "tolerance": 0 },
-          { "id": "iq-4", "prompt": "What is the capital city of Portugal?", "answerType": "string", "expected": "lisbon", "tolerance": 0 },
-          { "id": "iq-5", "prompt": "Which planet orbits closest to the Sun?", "answerType": "string", "expected": "mercury", "tolerance": 0 },
-          { "id": "iq-6", "prompt": "Which of these numbers is prime? A) 91 B) 97 C) 111 D) 121", "answerType": "choice", "expected": "B", "tolerance": 0 },
-          { "id": "iq-7", "prompt": "Which of these is a noble gas? A) nitrogen B) chlorine C) argon D) oxygen", "answerType": "choice", "expected": "C", "tolerance": 0 },
-          { "id": "iq-8", "prompt": "How many unit squares make up a 4 by 4 grid?", "answerType": "integer", "expected": "16", "tolerance": 0 }
+          {
+            "id": "iq-1",
+            "prompt": "What is 17 + 25?",
+            "answerType": "integer",
+            "expected": "42",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-2",
+            "prompt": "A leap year has 29 days in February. How many days do four such February months contain?",
+            "answerType": "integer",
+            "expected": "116",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-3",
+            "prompt": "What is 3^4 - 2^5?",
+            "answerType": "integer",
+            "expected": "49",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-4",
+            "prompt": "What is the capital city of Portugal?",
+            "answerType": "string",
+            "expected": "lisbon",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-5",
+            "prompt": "Which planet orbits closest to the Sun?",
+            "answerType": "string",
+            "expected": "mercury",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-6",
+            "prompt": "Which of these numbers is prime? A) 91 B) 97 C) 111 D) 121",
+            "answerType": "choice",
+            "expected": "B",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-7",
+            "prompt": "Which of these is a noble gas? A) nitrogen B) chlorine C) argon D) oxygen",
+            "answerType": "choice",
+            "expected": "C",
+            "tolerance": 0
+          },
+          {
+            "id": "iq-8",
+            "prompt": "How many unit squares make up a 4 by 4 grid?",
+            "answerType": "integer",
+            "expected": "16",
+            "tolerance": 0
+          }
         ]
       },
       "thinkingChain": {
@@ -792,8 +1086,12 @@
         "thinkingType": "enabled",
         "budgetTokens": 1024,
         "maxTokens": 1600,
-        "thinkingBlockTypes": ["thinking"],
-        "redactedBlockTypes": ["redacted_thinking"],
+        "thinkingBlockTypes": [
+          "thinking"
+        ],
+        "redactedBlockTypes": [
+          "redacted_thinking"
+        ],
         "contentTypeKey": "type",
         "textKey": "thinking",
         "signatureKey": "signature",

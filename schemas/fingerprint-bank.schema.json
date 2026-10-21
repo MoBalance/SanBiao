@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/MoBalance/SanBiao/main/schemas/fingerprint-bank.schema.json",
+  "title": "SanBiao model fingerprint bank",
+  "description": "Reference fingerprints used to attribute an observed model. Numeric models carry a 355-bin histogram over the integers 1..355; behavioral models carry the refusal, formatting and uncertainty references captured by the same probe suite.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "version", "channel", "source", "numeric", "behavioral"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "$ref": "#/$defs/identifier" },
+    "version": { "$ref": "#/$defs/identifier" },
+    "channel": { "$ref": "#/$defs/identifier" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "upstreamRepository",
+        "upstreamCommit",
+        "upstreamPath",
+        "syncedAt",
+        "builtAt",
+        "vendoredAt"
+      ],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "upstreamRepository": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "upstreamCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "upstreamPath": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "syncedAt": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "builtAt": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "vendoredAt": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "numeric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "minimumValidNumbers", "calibration", "models"],
+      "properties": {
+        "method": {
+          "type": "object",
+          "required": [
+            "name",
+            "range",
+            "alpha",
+            "ordered_block_weight",
+            "parser",
+            "response_score",
+            "aggregation",
+            "probability"
+          ],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "maxLength": 240 },
+            "range": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "integer", "minimum": 0, "maximum": 65535 }
+            },
+            "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+            "ordered_block_weight": { "type": "number", "minimum": 0, "maximum": 1 },
+            "parser": { "type": "string", "minLength": 1, "maxLength": 480 },
+            "response_score": { "type": "string", "minLength": 1, "maxLength": 480 },
+            "aggregation": { "type": "string", "minLength": 1, "maxLength": 480 },
+            "probability": { "type": "string", "minLength": 1, "maxLength": 480 }
+          }
+        },
+        "minimumValidNumbers": { "type": "integer", "minimum": 1 },
+        "calibration": { "type": "object", "minProperties": 1 },
+        "models": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/numericModel" }
+        }
+      }
+    },
+    "behavioral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["models"],
+      "properties": {
+        "models": {
+          "type": "array",
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/behavioralModel" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "numericModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "family", "validNumberCount", "counts"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "displayName": { "$ref": "#/$defs/identifier" },
+        "family": { "$ref": "#/$defs/identifier" },
+        "validNumberCount": { "type": "integer", "minimum": 1 },
+        "counts": {
+          "type": "array",
+          "minItems": 355,
+          "maxItems": 355,
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "behavioralModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modelId", "family", "displayName", "references", "sampleSize", "updatedAt"],
+      "properties": {
+        "modelId": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "family": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "references": { "type": "object", "minProperties": 1 },
+        "sampleSize": { "type": "integer", "minimum": 1 },
+        "updatedAt": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    }
+  }
+}

@@ -1,12 +1,12 @@
 {
   "repositorySchemaVersion": 1,
-  "release": "2026.10.19.3",
+  "release": "2026.10.21.1",
   "coreRules": {
     "id": "the-standard",
-    "version": "2026.10.19.3",
+    "version": "2026.10.21.1",
     "channel": "stable",
     "path": "rules/the-standard/stable.json",
-    "digest": "sha256:428451a058db70fb363e888da035e9ff9d222b1c197e7aba2868cff469481e0e"
+    "digest": "sha256:25b8f3d22fb5c0fa0fbd7c876f988a47859b6a004ceb5a6857afe018e11de8b0"
   },
   "knowledgePacks": [
     {
@@ -22,6 +22,20 @@
           "model": "the-standard-demo-model"
         }
       ]
+    }
+  ],
+  "fingerprintBanks": [
+    {
+      "id": "model-fingerprint-bank",
+      "version": "2026.10.21.1",
+      "channel": "stable",
+      "path": "packs/fingerprint/model-fingerprint-bank.json",
+      "digest": "sha256:0798e087ae3becdcb3a87d877b9933b19e2b0621b439391b25cd614c1b061bb9",
+      "source": {
+        "repository": "kiss-kedaya/chanshui",
+        "upstreamRepository": "xqy2006/ModelTrace",
+        "upstreamCommit": "6cd4a8ff0f3f4e49d6d6969dd2fbadfa1569fde2"
+      }
     }
   ]
 }

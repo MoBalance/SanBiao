@@ -555,6 +555,7 @@ function main() {
     'schemas/repository.schema.json',
     'schemas/core-rule.schema.json',
     'schemas/knowledge-pack.schema.json',
+    'schemas/fingerprint-bank.schema.json',
   ];
   const keywordsAudited = [];
   const schemas = new Map();
@@ -587,6 +588,7 @@ function main() {
   const repositorySchema = schemas.get(schemaFiles[0]);
   const coreRuleSchema = schemas.get(schemaFiles[1]);
   const knowledgePackSchema = schemas.get(schemaFiles[2]);
+  const fingerprintBankSchema = schemas.get(schemaFiles[3]);
 
   section('manifest');
   let manifest;
@@ -621,6 +623,9 @@ function main() {
   const documents = [{ kind: 'coreRules', entry: manifest.coreRules }];
   for (const [index, pack] of (manifest.knowledgePacks ?? []).entries()) {
     documents.push({ kind: `knowledgePacks[${index}]`, entry: pack });
+  }
+  for (const [index, bank] of (manifest.fingerprintBanks ?? []).entries()) {
+    documents.push({ kind: `fingerprintBanks[${index}]`, entry: bank });
   }
   const seenPaths = new Set();
   const seenIdentities = new Set();
@@ -675,6 +680,8 @@ function main() {
     // Typed document schema, chosen by which manifest slot referenced it.
     if (kind === 'coreRules') {
       validateAgainstSchema(coreRuleSchema, loaded.value, entry.path, schemaFiles[1]);
+    } else if (kind.startsWith('fingerprintBanks')) {
+      validateAgainstSchema(fingerprintBankSchema, loaded.value, entry.path, schemaFiles[3]);
     } else {
       validateAgainstSchema(knowledgePackSchema, loaded.value, entry.path, schemaFiles[2]);
     }
@@ -685,6 +692,41 @@ function main() {
     fail('sections', 'the core rule document could not be read, so section invariants were not checked');
   } else {
     checkSections(coreRuleDocument);
+  }
+
+  section('fingerprints');
+  for (const [index, bank] of (manifest.fingerprintBanks ?? []).entries()) {
+    const kind = `fingerprintBanks[${index}]`;
+    let loaded;
+    try {
+      loaded = loadJson(bank.path).value;
+    } catch (error) {
+      fail(`fingerprint bank ${kind}`, `cannot read ${bank.path}: ${error.message}`);
+      continue;
+    }
+    if (bank.version !== manifest.release) {
+      fail(
+        `fingerprint bank ${kind} version`,
+        `bank version ${JSON.stringify(bank.version)} != manifest release ${JSON.stringify(manifest.release)}`,
+      );
+    } else {
+      ok(`fingerprint bank ${kind} version`, bank.version);
+    }
+    const models = loaded.numeric?.models ?? [];
+    const empty = models.filter(
+      (model) =>
+        !Array.isArray(model.counts) || model.counts.reduce((sum, value) => sum + value, 0) === 0,
+    );
+    if (empty.length === 0) {
+      ok(`fingerprint numeric models ${kind}`, `${models.length} models, every histogram is non-empty`);
+    } else {
+      fail(
+        `fingerprint numeric models ${kind}`,
+        `empty histograms for ${empty.map((model) => model.id).join(', ')}`,
+      );
+    }
+    const families = new Set(models.map((model) => model.family));
+    ok(`fingerprint families ${kind}`, `${families.size} families (${[...families].join(', ')})`);
   }
 
   report();
