@@ -32,24 +32,36 @@ SanBiao/
 ├── schemas/
 │   ├── repository.schema.json
 │   ├── core-rule.schema.json
-│   └── knowledge-pack.schema.json
+│   ├── knowledge-pack.schema.json
+│   └── fingerprint-bank.schema.json
 ├── rules/
 │   └── the-standard/
 │       └── stable.json
-└── packs/
-    └── demo/
-        └── the-standard-demo-model.json
+├── packs/
+│   ├── demo/
+│   │   └── the-standard-demo-model.json
+│   └── fingerprint/
+│       └── model-fingerprint-bank.json
 ```
 
 `manifest.json` 是唯一发现入口。`coreRules` 指向当前法仪规则文档；`knowledgePacks` 按身份、
-频道、相对 JSON 路径、规范摘要和目标选择器索引题包。消费者不得枚举仓库目录，也不得执行
-仓库内容。
+频道、相对 JSON 路径、规范摘要和目标选择器索引题包；`fingerprintBanks` 是可选槽位，索引
+模型指纹库（来源、方法、参考直方图与校准参数）。
+
+模型指纹库当前 vendor 自 [`kiss-kedaya/chanshui`](https://github.com/kiss-kedaya/chanshui) 的
+`internal/fingerprint/bank.generated.json`（上游 `xqy2006/ModelTrace`）：numeric 部分给出 18 个
+模型在 1..355 上的 355 桶直方图、参考方法与温度校准，behavioral 部分给出 34 个模型的拒答/
+格式/不确定性参考值。文档内 `source` 记录上游仓库、commit、路径与抓取时间，`manifest.json`
+的对应条目再记录一次来源摘要；两者都必须与文档内容一致，否则摘要校验失败。
+
+消费方（法仪）只用 numeric 部分做候选归因：发一次"1..355 取值"挑战，解析整数、统计直方图、
+与各参考直方图求 JS 相似度并做 softmax 排名。行为部分留作后续扩展，当前不参与打分。
 
 `schemas/core-rule.schema.json` 描述规则文档的稳定信封、当前 payload 版本和顶层能力分区，供
 编辑器、代码审查和静态 JSON Schema 工具尽早发现字段遗漏、未知顶层字段或错误类型。它不替代
 法仪的强类型解析、资源上限和语义校验；能通过 Schema 的文档仍必须通过法仪测试和规范摘要校验。
 
-当前仓库 release 为 `2026.10.19.3`，其中法仪规则版本为 `2026.10.19.3`。增加或修改 Schema 同样必须递增 release，即使规则文档和
+当前仓库 release 为 `2026.10.21.1`，其中法仪规则版本为 `2026.10.21.1`。增加或修改 Schema 同样必须递增 release，即使规则文档和
 题包摘要本身没有变化。
 
 ## 发布地址
